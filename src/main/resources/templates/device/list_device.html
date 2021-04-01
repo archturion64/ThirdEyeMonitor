@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Devices</title>
+</head>
+<body>
+<div align="center">
+    <h1>Devices</h1>
+    <a href="/device/new">Add new entry</a>
+    <br/><br/>
+    <table border="1" cellpadding="10">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>IP Address</th>
+                <th>Operating System</th>
+                <th>Vulnerabilities</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="device : ${deviceList}">
+                <td th:text="${device.id}">Device ID</td>
+                <td th:text="${device.name}">Name</td>
+                <td th:text="${device.address}">IP Address</td>
+                <td th:text="${device.os}">Operation System</td>
+                <td>
+                    <form action="#" th:action="@{'/device/vulnerability_add/' + ${device.id}}" th:object="${cve}" method="post">
+                        <input type="text" th:field="*{value}" />
+                        <input type="submit" value="Add CVE"/>
+                    </form>
+                    <th:block th:each="vulnerability : ${device.vulnerabilities}">
+                        <p th:text="${vulnerability.vulnerabilityCve}">cve</p>
+                    </th:block>
+                </td>
+                <td>
+                    <a th:href="@{'/device/edit/' + ${device.id}}">Edit</a>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a th:href="@{'/device/delete/' + ${device.id}}">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br/><br/>
+    <a href="/vulnerability/list">List of monitored vulnerabilities</a>
+</div>
+</body>
+</html>
