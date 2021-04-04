@@ -2,17 +2,19 @@ package com.github.archturion64.thirdeye;
 
 import com.github.archturion64.thirdeye.domains.Device;
 import com.github.archturion64.thirdeye.domains.Severity;
+import com.github.archturion64.thirdeye.domains.User;
 import com.github.archturion64.thirdeye.domains.Vulnerability;
 import com.github.archturion64.thirdeye.repositories.DeviceRepository;
+import com.github.archturion64.thirdeye.repositories.UserRepository;
 import com.github.archturion64.thirdeye.repositories.VulnerabilityRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @SpringBootApplication
@@ -20,6 +22,7 @@ public class ThirdEyeMonitorApplication implements CommandLineRunner {
 
 	private final VulnerabilityRepository vulnerabilityRepository;
 	private final DeviceRepository deviceRepository;
+	private final UserRepository userRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ThirdEyeMonitorApplication.class, args);
@@ -58,10 +61,13 @@ public class ThirdEyeMonitorApplication implements CommandLineRunner {
 				Severity.CRITICAL
 		);
 
+		User user = new User(); // forward declaration
+
 		Device d1 = new Device(
 				"Tony's Mac",
 				"192.168.1.2",
-				"MacOS"
+				"MacOS",
+				user
 		);
 		d1.addVulnerability(v1);
 		d1.addVulnerability(v2);
@@ -69,20 +75,23 @@ public class ThirdEyeMonitorApplication implements CommandLineRunner {
 		Device d2 = new Device(
 				"Mike's Tablet",
 				"192.168.1.3",
-				"iOS"
+				"iOS",
+				user
 		);
 		d2.addVulnerability(v1);
 
 		Device d3 = new Device(
 				"Sheela's Desktop",
 				"192.168.1.4",
-				"Arch Linux"
+				"Arch Linux",
+				user
 		);
 
 		Device d4 = new Device(
 				"Matt's Desktop",
 				"192.168.1.5",
-				"Windows 10"
+				"Windows 10",
+				user
 		);
 		d4.addVulnerability(v3);
 		d4.addVulnerability(v4);
@@ -92,8 +101,15 @@ public class ThirdEyeMonitorApplication implements CommandLineRunner {
 		List<Vulnerability> vulnerabilities =
 				Arrays.asList(v1, v2, v3, v4, v5);
 
-		vulnerabilityRepository.saveAll(vulnerabilities);
-		deviceRepository.saveAll(devices);
+		user.setEmail("test@test.com");
+		user.setFirstName("FirstName");
+		user.setLastName("LastName");
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		user.setPassword(encoder.encode("password"));
+		user.setDevices(devices);
 
+		vulnerabilityRepository.saveAll(vulnerabilities);
+
+		userRepository.save(user);
 	}
 }

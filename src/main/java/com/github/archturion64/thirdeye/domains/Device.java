@@ -1,15 +1,12 @@
 package com.github.archturion64.thirdeye.domains;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -63,9 +60,15 @@ public class Device {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Vulnerability> vulnerabilities = new HashSet<>();
 
-    public Device(String name, String address, String os) {
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="user_id")
+    private User user;
+
+    public Device(String name, String address, String os, User user) {
         this.name = name;
         this.address = address;
         this.os = os;
+        this.user = user;
     }
 }
