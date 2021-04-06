@@ -11,12 +11,15 @@ import org.springframework.transaction.IllegalTransactionStateException;
 public class UserService {
     private final UserRepository userRepository;
 
-    public User findUserByEmail(String email){
+    public User findUserByEmail(String email) throws IllegalTransactionStateException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException(String.format("unknown email %s", email)));
     }
 
-    public User save(User user){
+    public User save(User user) throws IllegalTransactionStateException {
+        if(userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new IllegalTransactionStateException(String.format("user with email %s already present", user.getEmail()));
+        }
         userRepository.save(user);
         return userRepository.findById(user.getId())
                 .orElseThrow(() ->
