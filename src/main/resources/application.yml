@@ -1,16 +1,11 @@
-server:
-  error:
-    include-message: always
-    include-binding-errors: always
-
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/vulnerabilities
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: true
+  data:
+    mongodb:
+      username: test
+      password: test
+      database: vulndb
+      port: 27017
+      host: localhost
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG

@@ -1,15 +1,20 @@
 package com.github.archturion64.thirdeye.repositories;
 
-import com.github.archturion64.thirdeye.domains.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import com.github.archturion64.thirdeye.entities.User;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.Optional;
 
-@Repository
-@Transactional(readOnly = true)
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends ReactiveMongoRepository<User, String> {
 
-    Optional<User> findByEmail(String email);
+    Mono<Boolean> existsByEmail(String email);
+
+    Mono<Boolean> existsByEmailAndPassword(String email, String password);
+
+    Mono<User> findByEmail(String email);
+
+    Mono<Void> deleteByEmail(String email);
+
 }
